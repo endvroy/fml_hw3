@@ -29,7 +29,7 @@ def cross_validation(x, y, T, algo):
     perfs = np.empty(10)
     for i in range(10):
         train_x, train_y, val_x, val_y = split_cr(x, y, i)
-        model = BoostClassifier(n_estimators=T)
+        model = BoostClassifier(n_estimators=T, algorithm='SAMME')
         model.fit(train_x, train_y)
         acc = model.score(val_x, val_y)
         perfs[i] = acc
@@ -42,10 +42,12 @@ class LogisticBoostClassifier(AdaBoostClassifier):
         # sample weight assumed to be C_t
         real_sample_weight = 1 / (1 + sample_weight)  # this is D_t
         real_sample_weight /= np.sum(real_sample_weight)
-        returned_sample_weight, estimator_weight, estimator_error = super()._boost(
+        last_real_sample_weight = real_sample_weight.copy()
+        real_sample_weight, estimator_weight, estimator_error = super()._boost(
             iboost, X, y, real_sample_weight, random_state)  # boost with D_t
-        multiplier = returned_sample_weight / real_sample_weight
+        multiplier = real_sample_weight / last_real_sample_weight
         next_C_t = sample_weight * multiplier  # update C_t
+        next_C_t /= next_C_t.sum()
         return next_C_t, estimator_weight, estimator_error
 
 
