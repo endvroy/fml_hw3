@@ -30,7 +30,7 @@ def cross_validation(x, y, T, algo):
     perfs = np.empty(10)
     for i in range(10):
         train_x, train_y, val_x, val_y = split_cr(x, y, i)
-        model = BoostClassifier(n_estimators=T)
+        model = BoostClassifier(n_estimators=T, algorithm='SAMME')
         model.fit(train_x, train_y)
         acc = model.score(val_x, val_y)
         perfs[i] = acc
@@ -38,7 +38,7 @@ def cross_validation(x, y, T, algo):
 
 
 class LogisticBoostClassifier:
-    def __init__(self, n_estimators):
+    def __init__(self, n_estimators, *args, **kwargs):
         self.n_estimators = n_estimators
         self.base_estimators = []
         self.alpha = np.empty(n_estimators)
@@ -124,11 +124,11 @@ def final_test(algo, T):
 
 
 if __name__ == '__main__':
-    # ada_mean, ada_std = choose_T('ada')
-    # ada_T = 300
-    # ada_score = final_test('ada', T=ada_T)
-    # print(f'ada final score: {ada_score}')
+    ada_mean, ada_std = choose_T('ada')
+    ada_T = 700
+    ada_score = final_test('ada', T=ada_T)
+    print(f'ada final score: {ada_score}')
     logistic_mean, logistic_std = choose_T('logistic')
-    # logistic_T = 300
-    # logistic_score = final_test('logistic', T=logistic_T)
-    # print(f'logistic final score: {logistic_score}')
+    logistic_T = 300
+    logistic_score = final_test('logistic', T=logistic_T)
+    print(f'logistic final score: {logistic_score}')
